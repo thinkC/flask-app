@@ -1,3 +1,4 @@
+---
 - hosts: lab-server02
   become: yes
   tasks:

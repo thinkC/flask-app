@@ -12,7 +12,7 @@ pipeline{
             }
             stage("Install zip"){
                 steps{
-                    ansiblePlaybook credentialsId: 'ansible-access', installation: 'Ansible on jenkins01', inventory: '/var/lib/jenkins/workspace/Flask-App/inventory', playbook: '/var/lib/jenkins/workspace/Flask-App/test.yml', vaultTmpPath: ''
+                    ansiblePlaybook credentialsId: 'ansible-access', installation: 'Ansible on jenkins01', inventory: '/var/lib/jenkins/workspace/Flask-App/inventory', playbook: '/var/lib/jenkins/workspace/Flask-App/flask-webapp.yml', vaultTmpPath: ''
                 }
             }
          
