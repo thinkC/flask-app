@@ -51,6 +51,10 @@
       with_items:
         - app.py
         - requirements.txt
+    - name: Install python environment
+      apt:
+        name: python3.10-venv
+        state: present
 
     - name: Set up Python virtual environment
       command: "/usr/bin/python3 -m venv /opt/flask_app/venv"
