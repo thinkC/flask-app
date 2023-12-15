@@ -1,0 +1,67 @@
+- hosts: lab-server02
+  become: yes
+  tasks:
+    - name: Update apt packages
+      apt:
+        update_cache: yes
+
+    - name: Install Docker dependencies
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Add user to the docker group
+      user:
+        name: "{{ ansible_ssh_user }}"
+        groups: docker
+        append: yes
+
+    - name: Create /opt/flask_app directory
+      file:
+        path: /opt/flask_app
+        state: directory
+        mode: '0755'
+        owner: "{{ ansible_ssh_user }}"
+        group: "{{ ansible_ssh_user }}"
+
+    - name: Copy Flask application files
+      copy:
+        src: "{{ item }}"
+        dest: /opt/flask_app
+      with_items:
+        - app.py
+        - requirements.txt
+      remote_src: yes
+
+    - name: Set up Python virtual environment
+      command: "/usr/bin/python3 -m venv /opt/flask_app/venv"
+
+    - name: Install Flask dependencies
+      pip:
+        requirements: /opt/flask_app/requirements.txt
+        virtualenv: /opt/flask_app/venv
+
+    - name: Build Docker image
+      command: "docker build -t flask-app /opt/flask_app"
+
+    - name: Run Docker container
+      command: "docker run -d -p 5000:5000 --name flask-container flask-app"
