@@ -51,6 +51,7 @@
       with_items:
         - app.py
         - requirements.txt
+        - Dockerfile
     - name: Install python environment
       apt:
         name: python3.10-venv
